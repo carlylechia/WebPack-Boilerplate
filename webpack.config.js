@@ -1,28 +1,39 @@
-const path = require("path/posix");
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  "entry": './src/index.js',
-  "output": {
-    filename: 'main.js',
+  entry: './src/index.js',
+  plugins: [
+    new HtmlWebpackPlugin({
+      inject: 'body',
+      template: './src/index.html',
+      filename: 'index.html',
+    }),
+  ],
+  output: {
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [
       {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader',
-        ],
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+      test: /\.html$/i,
+      use: ['html-loader']
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg)$/,
+        type: 'asset/resource',
+        generator: {
+          filename: './images/[name][ext]'
+        }
       },
     ],
   },
-
   devServer: {
-    contentBase: path.join(__dirname, 'public'),
-    port: 9000
-  }
-  
+    static: './dist',
+  },
 };
